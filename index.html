@@ -1,0 +1,63 @@
+import React, { useState, useEffect } from "react";
+import "./App.css";
+
+const actors = [
+  { name: "Leonardo DiCaprio", image: "/images/leonardo.jpg" },
+  { name: "Penélope Cruz", image: "/images/penelope.jpg" },
+  { name: "Denzel Washington", image: "/images/denzel.jpg" },
+  { name: "Marion Cotillard", image: "/images/marion.jpg" },
+  { name: "Tom Hanks", image: "/images/tom.jpg" }
+];
+
+const getRandomActors = () => {
+  const shuffled = [...actors].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, 3);
+};
+
+function App() {
+  const [options, setOptions] = useState([]);
+  const [correctActor, setCorrectActor] = useState(null);
+  const [score, setScore] = useState(0);
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    const selectedOptions = getRandomActors();
+    setOptions(selectedOptions);
+    setCorrectActor(selectedOptions[Math.floor(Math.random() * selectedOptions.length)]);
+  }, []);
+
+  const handleGuess = (name) => {
+    if (name === correctActor.name) {
+      setScore(score + 1);
+      setMessage("¡Correcto! 🎉");
+    } else {
+      setMessage("Incorrecto 😢");
+    }
+    setTimeout(() => {
+      const newOptions = getRandomActors();
+      setOptions(newOptions);
+      setCorrectActor(newOptions[Math.floor(Math.random() * newOptions.length)]);
+      setMessage("");
+    }, 1500);
+  };
+
+  return (
+    <div className="game-container">
+      <h1>Adivina el Actor 🎬</h1>
+      <p>Puntuación: {score}</p>
+      {correctActor && (
+        <img src={correctActor.image} alt="actor" className="actor-image" />
+      )}
+      <div className="options">
+        {options.map((actor) => (
+          <button key={actor.name} onClick={() => handleGuess(actor.name)}>
+            {actor.name}
+          </button>
+        ))}
+      </div>
+      <p className="message">{message}</p>
+    </div>
+  );
+}
+
+export default App;
